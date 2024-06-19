@@ -29,10 +29,11 @@ export const getAllContacts = async ({
   sortBy = DEFAULT_SORT_BY,
   sortOrder = SORT_ORDER.ASC,
   filter = {},
+  userId,
 }) => {
   const skip = perPage * (page - 1);
 
-  const contactsFilters = Contact.find();
+  const contactsFilters = Contact.find({ userId });
 
   if (typeof filter.isFavorite === 'boolean') {
     contactsFilters.where('isFavorite').equals(filter.isFavorite);
@@ -66,11 +67,11 @@ export const getAllContacts = async ({
   };
 };
 
-export const getContactById = async (id) => {
-  if (!mongoose.Types.ObjectId.isValid(id))
+export const getContactById = async (contactId, userId) => {
+  if (!mongoose.Types.ObjectId.isValid(contactId))
     throw createHttpError(404, 'Contact not found');
 
-  const contact = await Contact.findById(id);
+  const contact = await Contact.findOne({ _id: contactId, userId });
 
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
@@ -85,16 +86,25 @@ export const createContact = async (payload) => {
   return contact;
 };
 
-export const upsertContact = async (id, payload, options = {}) => {
+export const upsertContact = async (
+  contactId,
+  userId,
+  payload,
+  options = {},
+) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw createHttpError(404, 'Contact not found');
   }
 
-  const rawResult = await Contact.findByIdAndUpdate(id, payload, {
-    new: true,
-    includeResultMetadata: true,
-    ...options,
-  });
+  const rawResult = await Contact.findOneAndUpdate(
+    { _id: contactId, userId },
+    payload,
+    {
+      new: true,
+      includeResultMetadata: true,
+      ...options,
+    },
+  );
 
   if (!rawResult || !rawResult.value) {
     throw createHttpError(404, 'Contact not found');
@@ -106,14 +116,19 @@ export const upsertContact = async (id, payload, options = {}) => {
   };
 };
 
-export const deleteContactById = async (contactId) => {
+export const deleteContactById = async (contactId, userId) => {
   if (!mongoose.Types.ObjectId.isValid(contactId)) {
     throw createHttpError(404, 'Contact not found');
   }
 
-  const contact = await Contact.findByIdAndDelete(contactId);
+  const contact = await Contact.findOneAndDelete({
+    _id: contactId,
+    userId,
+  });
 
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
   }
+
+  return contact;
 };

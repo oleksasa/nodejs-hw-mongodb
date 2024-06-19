@@ -1,25 +1,17 @@
 import express from 'express';
-import pino from 'pino-http';
 import cors from 'cors';
 import { env } from './utils/env.js';
 import { ENV_VARS } from './constants/index.js';
 import { errorHandlerMiddleware } from './middlewares/errorHandlerMiddleware.js';
 import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js';
-
-import contactsRouter from './routers/contacts.js';
+import rootRouter from './routers/index.js';
+import cookiesParser from 'cookie-parser';
 
 export const setupServer = () => {
   const app = express();
 
-  app.use(
-    pino({
-      transport: {
-        target: 'pino-pretty',
-      },
-    }),
-  );
-
   app.use(cors());
+  app.use(cookiesParser());
 
   app.use(
     express.json({
@@ -28,7 +20,7 @@ export const setupServer = () => {
     }),
   );
 
-  app.use(contactsRouter);
+  app.use(rootRouter);
 
   app.use(notFoundMiddleware);
 

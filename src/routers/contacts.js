@@ -6,37 +6,57 @@ import {
   deleteContactByIdController,
   patchContactController,
 } from '../controllers/contacts.js';
-import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import { ctrlWrapper } from '../middlewares/ctrlWrapper.js';
 import { createContactSchema } from '../validation/createContactsSchema.js';
 import { validateBody } from '../middlewares/validateBody.js';
-import { updateStudentSchema } from '../validation/updateContactsSchema.js';
+import { updateContactSchema } from '../validation/updateContactsSchema.js';
+import { authenticate } from '../middlewares/authenticate.js';
+import { validateMongoId } from '../middlewares/validateMongoId.js';
 
-const contactsRouter = Router();
+const router = Router();
 
-const contr = ctrlWrapper(getContactsController);
+router.use('/:contactId', validateMongoId('contactId'));
 
-contactsRouter.get('/contacts', contr);
+router.use('/', authenticate);
 
-contactsRouter.get(
-  '/contacts/:contactId',
-  ctrlWrapper(getContactsControllerById),
-);
+router.get('/', ctrlWrapper(getContactsController));
 
-contactsRouter.post(
-  '/contacts',
+router.get('/:contactId', ctrlWrapper(getContactsControllerById));
+
+router.post(
+  '/',
   validateBody(createContactSchema),
   ctrlWrapper(createContactController),
 );
 
-contactsRouter.patch(
-  '/contacts/:contactId',
-  validateBody(updateStudentSchema),
+router.patch(
+  '/:contactId',
+  validateBody(updateContactSchema),
   ctrlWrapper(patchContactController),
 );
 
-contactsRouter.delete(
-  '/contacts/:contactId',
-  ctrlWrapper(deleteContactByIdController),
-);
+router.delete('/:studentId', ctrlWrapper(deleteContactByIdController));
 
-export default contactsRouter;
+// router.use(authenticate);
+
+// const contr = ctrlWrapper(getContactsController);
+
+// router.get('/contacts', contr);
+
+// router.get('/contacts/:contactId', ctrlWrapper(getContactsControllerById));
+
+// router.post(
+//   '/contacts',
+//   validateBody(createContactSchema),
+//   ctrlWrapper(createContactController),
+// );
+
+// router.patch(
+//   '/contacts/:contactId',
+//   validateBody(updateStudentSchema),
+//   ctrlWrapper(patchContactController),
+// );
+
+// router.delete('/contacts/:contactId', ctrlWrapper(deleteContactByIdController));
+
+export default router;
