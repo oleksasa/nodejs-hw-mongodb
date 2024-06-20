@@ -15,11 +15,13 @@ import { validateMongoId } from '../middlewares/validateMongoId.js';
 
 const router = Router();
 
-router.use('/:contactId', validateMongoId('contactId'));
+router.delete('/:contactId', ctrlWrapper(deleteContactByIdController));
 
-router.use('/', authenticate);
+router.use(authenticate);
 
-router.get('/', ctrlWrapper(getContactsController));
+const contr = ctrlWrapper(getContactsController);
+
+router.get('/', contr);
 
 router.get('/:contactId', ctrlWrapper(getContactsControllerById));
 
@@ -35,28 +37,6 @@ router.patch(
   ctrlWrapper(patchContactController),
 );
 
-router.delete('/:studentId', ctrlWrapper(deleteContactByIdController));
-
-// router.use(authenticate);
-
-// const contr = ctrlWrapper(getContactsController);
-
-// router.get('/contacts', contr);
-
-// router.get('/contacts/:contactId', ctrlWrapper(getContactsControllerById));
-
-// router.post(
-//   '/contacts',
-//   validateBody(createContactSchema),
-//   ctrlWrapper(createContactController),
-// );
-
-// router.patch(
-//   '/contacts/:contactId',
-//   validateBody(updateStudentSchema),
-//   ctrlWrapper(patchContactController),
-// );
-
-// router.delete('/contacts/:contactId', ctrlWrapper(deleteContactByIdController));
+router.delete('/:contactId', ctrlWrapper(deleteContactByIdController));
 
 export default router;

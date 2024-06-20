@@ -29,11 +29,10 @@ export const getAllContacts = async ({
   sortBy = DEFAULT_SORT_BY,
   sortOrder = SORT_ORDER.ASC,
   filter = {},
-  userId,
 }) => {
   const skip = perPage * (page - 1);
 
-  const contactsFilters = Contact.find({ userId });
+  const contactsFilters = Contact.find();
 
   if (typeof filter.isFavorite === 'boolean') {
     contactsFilters.where('isFavorite').equals(filter.isFavorite);
@@ -60,6 +59,7 @@ export const getAllContacts = async ({
     perPage,
     contactsCount,
   );
+  console.log(contacts);
 
   return {
     contacts,
