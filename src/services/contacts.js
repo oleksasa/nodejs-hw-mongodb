@@ -29,10 +29,11 @@ export const getAllContacts = async ({
   sortBy = DEFAULT_SORT_BY,
   sortOrder = SORT_ORDER.ASC,
   filter = {},
+  userId,
 }) => {
   const skip = perPage * (page - 1);
 
-  const contactsFilters = Contact.find();
+  const contactsFilters = Contact.find({ userId });
 
   if (typeof filter.isFavorite === 'boolean') {
     contactsFilters.where('isFavorite').equals(filter.isFavorite);
@@ -43,8 +44,8 @@ export const getAllContacts = async ({
   }
 
   const [contactsCount, contacts] = await Promise.all([
-    Contact.find().merge(contactsFilters).countDocuments(),
-    Contact.find()
+    Contact.find({ userId }).merge(contactsFilters).countDocuments(),
+    Contact.find({ userId })
       .merge(contactsFilters)
       .skip(skip)
       .limit(perPage)
@@ -80,8 +81,8 @@ export const getContactById = async (contactId, userId) => {
   return contact;
 };
 
-export const createContact = async (payload) => {
-  const contact = await Contact.create(payload);
+export const createContact = async (payload, userId) => {
+  const contact = await Contact.create({ ...payload, userId });
 
   return contact;
 };
@@ -92,7 +93,7 @@ export const upsertContact = async (
   payload,
   options = {},
 ) => {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
     throw createHttpError(404, 'Contact not found');
   }
 
