@@ -69,8 +69,9 @@ export const getAllContacts = async ({
 };
 
 export const getContactById = async (contactId, userId) => {
-  if (!mongoose.Types.ObjectId.isValid(contactId))
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
     throw createHttpError(404, 'Contact not found');
+  }
 
   const contact = await Contact.findOne({ _id: contactId, userId });
 

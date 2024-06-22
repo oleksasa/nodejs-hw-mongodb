@@ -29,14 +29,37 @@ export const getContactsController = async (req, res) => {
   });
 };
 
+// export const getContactsControllerById = async (req, res) => {
+//   try {
+//     const contactId = req.params.contactId;
+//     const userId = req.user._id;
+
+//     const contact = await getContactById(contactId, userId);
+
+//     res.json({
+//       status: 200,
+//       message: ,
+//       data: contact,
+//     });
+//   } catch (error) {
+//     res.status(error.status || 500).json({
+//       status: error.status || 500,
+//       data: {
+//         message: error.message,
+//       },
+//     });
+//   }
+// };
+
 export const getContactsControllerById = async (req, res) => {
-  const id = req.params.contactId;
-  console.log(id);
-  const contact = await getContactById(id);
+  const contactId = req.params.contactId;
+  const userId = req.user._id;
+
+  const contact = await getContactById(contactId, userId);
 
   res.json({
     status: 200,
-    message: `Successfully found contact with id ${id}!`,
+    message: `Successfully get student with id ${contactId}!`,
     data: contact,
   });
 };
@@ -55,7 +78,8 @@ export const createContactController = async (req, res) => {
 export const patchContactController = async (req, res) => {
   const { body } = req;
   const { contactId } = req.params;
-  const { contact } = await upsertContact(contactId, body);
+  const userId = req.user._id;
+  const { contact } = await upsertContact(contactId, userId, body);
 
   res.status(200).json({
     status: 200,
