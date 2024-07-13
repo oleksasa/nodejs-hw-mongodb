@@ -7,6 +7,8 @@ import {
   DEFAULT_SORT_BY,
   SORT_ORDER,
 } from '../constants/index.js';
+import { saveFileToLocalMachine } from '../utils/saveFileToLocalMachine.js';
+import { saveFile } from '../utils/saveFile.js';
 
 const createPaginationInformation = (page, perPage, count) => {
   const totalPages = Math.ceil(count / perPage);
@@ -82,8 +84,10 @@ export const getContactById = async (contactId, userId) => {
   return contact;
 };
 
-export const createContact = async (payload, userId) => {
-  const contact = await Contact.create({ ...payload, userId });
+export const createContact = async ({ avatar, ...payload }, userId) => {
+  const url = await saveFile(avatar);
+
+  const contact = await Contact.create({ ...payload, userId, avatarUrl: url });
 
   return contact;
 };

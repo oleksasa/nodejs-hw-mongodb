@@ -11,6 +11,7 @@ import { createContactSchema } from '../validation/createContactsSchema.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { updateContactSchema } from '../validation/updateContactsSchema.js';
 import { authenticate } from '../middlewares/authenticate.js';
+import { upload } from '../middlewares/upload.js';
 
 const router = Router();
 
@@ -24,12 +25,14 @@ router.get('/:contactId', ctrlWrapper(getContactsControllerById));
 
 router.post(
   '/',
+  upload.single('avatar'),
   validateBody(createContactSchema),
   ctrlWrapper(createContactController),
 );
 
 router.patch(
   '/:contactId',
+  upload.single('avatar'),
   validateBody(updateContactSchema),
   ctrlWrapper(patchContactController),
 );
