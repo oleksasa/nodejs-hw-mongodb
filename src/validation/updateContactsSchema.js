@@ -12,6 +12,6 @@ export const updateContactSchema = Joi.object({
     'string.max': 'Max phone number length is not achieved',
   }),
   email: Joi.string().email(),
-  isFavourite: Joi.boolean(),
+  isFavorite: Joi.boolean(),
   contactType: Joi.string().valid('home', 'personal', 'work'),
 });

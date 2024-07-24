@@ -21,6 +21,6 @@ export const parseFilters = (query) => {
     sortBy: parseSortBy(query.sortBy),
     sortOrder: parseSortOrder(query.sortOrder),
     contactType: parseType(query.contactType),
-    isFavourite: parseBoolean(query.isFavourite),
+    isFavorite: parseBoolean(query.isFavorite),
   };
 };
